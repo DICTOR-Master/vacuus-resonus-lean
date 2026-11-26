@@ -149,8 +149,7 @@ automation:
         hardware: "local Linux machines"
       prompting_notes: >-
         DICTO found the results (papers #105 and #120), asked for them in Lean
-        on the real polytope after the first entry was withdrawn, and chose
-        the title.
+        on the real polytope, and chose the title.
   spend_usd: "subscription-based"
   notes: >-
     DICTO posed the formalization and directed the work; every definition,
