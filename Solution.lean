@@ -1,110 +1,267 @@
 module
 
 public import Mathlib
-public import VacuusResonus
+public import TauCeti.Analysis.Convex.PermutationOrbit
+public import PermFaces
 
 @[expose] public section
 
 /-!
-# The Vacuus and the Resonus, machine-checked (DICTO #120)
+# The Vacuus and the Resonus of the permutohedron, machine-checked (DICTO #120)
 
-**Informal statement.** A convex polytope `P` with the centre `O = 0` inside. Its *Vacuus* is the set of planes through `O`
-and a ridge (an edge in 3-space); its *Resonus* is the set of planes through `O` parallel to a facet. A facet lies on a plane
-`⟪a, x⟫ = 1`; the vectors `a` are the corners of the polar `P*`.
+**Informal statement.** The permutohedron `P n` is the convex hull of the rearrangements of `(n, n-1, …, 1)` in `ℝⁿ`; its
+centre is `((n+1)/2, …, (n+1)/2)`. Its *Vacuus* is the set of planes through the centre and a ridge; its *Resonus* is the set
+of planes through the centre parallel to a facet. Every statement below is about faces of `P n` itself.
 
-1. `resonusPlane_eq_orthogonal` (**#120 Theorem 4 (a), the polar link**): the plane through `O` parallel to the facet plane
-   `⟪a, x⟫ = 1` (the translations carrying it into itself) is the orthogonal complement of the line to the polar corner `a`.
-2. `span_ridgeFlat` (**#120 Theorem 2, the pencil lemma**): for independent `u₁, u₂` and `h₁, h₂ ≠ 0`, the plane through `O`
-   and the flat of `⟪u₁, y⟫ = h₁`, `⟪u₂, y⟫ = h₂` is the zero set of `h₂ u₁ - h₁ u₂`.
-3. `vacuusPlate_polar` (**#120 Theorem 4 (b), any dimension**): a ridge whose affine span is the flat of `⟪a, x⟫ = 1` and
-   `⟪b, x⟫ = 1` spans the plane at right angles to the polar edge direction `a - b`.
-4. `heart_of_symm` (**#120 Theorem 1, one direction**): a centrally symmetric set is of the heart kind: the opposite of every
-   ridge (a nonempty exposed face of dimension `finrank E - 2`) is again a ridge. (The converse is not formalized here.)
-5. `span_permFlat` (**#120 Theorem 3 (i)**): in `ℝⁿ`, the plane through `O` and the flat of the permutohedron ridge
-   `(B₁, B₂, B₃)` (facet planes `∑_{B₁} y = a(b+c)/2`, `∑_{B₁ ∪ B₂} y = (a+b)c/2`, inside `∑ y = 0`; `a, b, c` the block sizes)
-   is `{y | ∑ y = 0 ∧ c(a+b) ∑_{B₁} y + a(b+c) ∑_{B₃} y = 0}`.
-6. `web_iff` (**lattice webs, Theorem 0**): for a convex, centrally symmetric cell `P` with interior points, a functional `f ≠ 0`
-   with least upper bound `h` on `P`, and a lattice `Λ`: every translate of a central plane `f x = f λ` that meets the interior
-   of a cell `P + μ` is that cell's own central plane if and only if every `ν ∈ Λ` has `f ν = 0` or `h ≤ |f ν|`.
+*Faces.* An ordered partition of the coordinates into `m` nonempty blocks is a surjective `key : Fin n → Fin m`. Its face
+`flagFace key` is the set of points of `P n` at which, for every `t`, the coordinates in blocks `≤ t` have the largest sum
+that occurs on `P n` (`top n k`, the sum of the `k` largest entries). `facet S` is the face of one set `S`.
+1. `flagFace_isExposed`, `finrank_vectorSpan_flagFace`: the face of `key` is an exposed face of `P n` of dimension `n - m`
+   (facets `m = 2`, ridges `m = 3`).
+2. `facet_isExposed`, `vectorSpan_facet`, `finrank_vectorSpan_facet`: for `∅ ≠ S ≠ univ` the facet of `S` is an exposed face,
+   its directions are the vectors with sum `0` over `S` and over the complement (`dirs S`), and its dimension is `n - 2`.
 
-**Sources.** DICTO's paper #120 (Theorems 1 to 4); the polar and face duality as in Ziegler, *Lectures on Polytopes*; the
-pencil lemma is standard linear algebra. Every definition and statement is copied from the Lean library `VacuusResonus`
-(here namespace `VR`).
+*Vacuus.* A ridge is the face of `key : Fin n → Fin 3` surjective, with blocks `B₁, B₂, B₃` of sizes `a, b, c`.
+3. `span_centred_ridge` (**#120 Theorem 3 (i)**): the plane through the centre and the ridge is
+   `permPlate B₁ B₂ B₃ = {y | ∑ y = 0 ∧ c(a+b) ∑_{B₁} y + a(b+c) ∑_{B₃} y = 0}`.
+4. `plate_eq_iff` (**#120 Theorem 3 (ii)**): two ridges have the same plate exactly when `a ≠ c` and the second ridge is the
+   first or the first read backwards, or both have outer blocks of equal size and the same or complementary middle blocks.
+5. `card_plateSet` (**#120 Theorem 3 (iii)**, OEIS A402191): for `n ≥ 3` the number of distinct plates is
+   `∑_{a+b+c=n, a,b,c ≥ 1, a<c} n!/(a! b! c!) + T(n)`, `T(n) = 2^(n-2) - 1` for `n` even and `2^(n-1) - 1` for `n` odd;
+   `plates_three … plates_eight`: the values `3, 15, 65, 225, 770, 2443`.
+
+*Resonus.* The Resonus plane of the facet of `S` is its direction space `vectorSpan ℝ (facet S) = dirs S`.
+6. `vectorSpan_facet_eq_iff`, `dirs_eq_iff`: two facets have the same Resonus plane exactly when `S' = S` or `S' = Sᶜ`.
+7. `card_resonusSet`: there are `2^(n-1) - 1` Resonus planes; `resonus_three … resonus_eight`: `3, 7, 15, 31, 63, 127`.
+8. `resonus_parallel`: each Resonus plane is `dirs S` for a facet `S`; the facet is not empty and lies in the translate of
+   the plane through any of its points; the plane has dimension `n - 2`.
+9. `dirs_eq_plate_iff`: the Resonus plane of `S` is the Vacuus plate of a ridge exactly when the outer blocks of the ridge
+   have equal size and `S` is its middle block or the complement.
+10. `resonusSet_subset_plateSet_of_odd`, `card_resonus_diff_plate_even`: for odd `n ≥ 3` every Resonus plane is a Vacuus
+    plate; for even `n ≥ 4` exactly `2^(n-2)` Resonus planes are not.
+
+**Sources.** DICTO's paper #120 (Theorems 3 and 5). The faces of the permutohedron and Rado's theorem are classical (Rado
+1952; Ziegler, *Lectures on Polytopes*); `TauCeti.prefixSum` (the sum of the first `k` coordinates) is from the TauCeti
+library, whose formalization of Rado's theorem the proofs use. Every definition and statement is copied from the Lean
+library `PermFaces` (here namespace `VR`).
 -/
 
 namespace VR
 
-open scoped RealInnerProductSpace Pointwise
 open Finset
+open scoped Pointwise
 
-section General
-variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+variable {n m : ℕ}
 
-/-- The facet plane `⟪a, x⟫ = 1`. -/
-def facetPlane (a : E) : Set E := {x | ⟪a, x⟫ = 1}
+/-! ### The permutohedron and its faces -/
 
-/-- The Resonus plane of the facet plane `⟪a, x⟫ = 1`: the translations carrying it into itself. -/
-def resonusPlane (a : E) : Set E := {v | ∀ p ∈ facetPlane a, p + v ∈ facetPlane a}
+/-- `w = (n, n-1, …, 1)`. -/
+def w (n : ℕ) : Fin n → ℝ := fun i => ((n - (i : ℕ) : ℕ) : ℝ)
 
-/-- The points on both facet planes `⟪u₁, y⟫ = h₁` and `⟪u₂, y⟫ = h₂`. -/
-def ridgeFlat (u₁ : E) (h₁ : ℝ) (u₂ : E) (h₂ : ℝ) : Set E := {y | ⟪u₁, y⟫ = h₁ ∧ ⟪u₂, y⟫ = h₂}
+/-- The permutohedron: the convex hull of the rearrangements of `w`. -/
+def P (n : ℕ) : Set (Fin n → ℝ) := convexHull ℝ (Set.range fun σ : Equiv.Perm (Fin n) => w n ∘ σ)
 
-/-- The pencil form `h₂ u₁ - h₁ u₂`. -/
-def pencil (u₁ : E) (h₁ : ℝ) (u₂ : E) (h₂ : ℝ) : E := h₂ • u₁ - h₁ • u₂
+/-- The sum of the `k` largest entries of `w`. -/
+def top (n k : ℕ) : ℝ := TauCeti.prefixSum k (w n)
 
-/-- A ridge of `X`: a nonempty exposed face of dimension `finrank E - 2`. -/
-def IsRidge (X R : Set E) : Prop :=
-  R.Nonempty ∧ IsExposed ℝ X R ∧ Module.finrank ℝ (vectorSpan ℝ R) + 2 = Module.finrank ℝ E
+/-- The face of `S`: the points of `P n` where the facet inequality of `S` is an equality. -/
+def facet (S : Finset (Fin n)) : Set (Fin n → ℝ) := {x | x ∈ P n ∧ ∑ i ∈ S, x i = top n S.card}
 
-/-- The heart kind: the opposite of every ridge is a ridge. -/
-def IsHeart (X : Set E) : Prop := ∀ R, IsRidge X R → IsRidge X (-R)
+/-- `v ↦ ∑_{i ∈ T} vᵢ` as a linear map. -/
+def sumL (T : Finset (Fin n)) : (Fin n → ℝ) →ₗ[ℝ] ℝ where
+  toFun v := ∑ i ∈ T, v i
+  map_add' x y := by simp [sum_add_distrib]
+  map_smul' c x := by simp [mul_sum]
 
-theorem resonusPlane_eq_orthogonal {a : E} (ha : a ≠ 0) :
-    resonusPlane a = ((ℝ ∙ a)ᗮ : Submodule ℝ E) := by
-  exact VacuusResonus.resonusPlane_eq_orthogonal ha
+/-- The pair of sums over `S` and over its complement. -/
+def pairL (S : Finset (Fin n)) : (Fin n → ℝ) →ₗ[ℝ] ℝ × ℝ := (sumL S).prod (sumL Sᶜ)
 
-theorem span_ridgeFlat {u₁ u₂ : E} (hli : LinearIndependent ℝ ![u₁, u₂]) {h₁ h₂ : ℝ}
-    (hh₁ : h₁ ≠ 0) (hh₂ : h₂ ≠ 0) :
-    Submodule.span ℝ (ridgeFlat u₁ h₁ u₂ h₂) = (ℝ ∙ pencil u₁ h₁ u₂ h₂)ᗮ := by
-  exact VacuusResonus.span_ridgeFlat hli hh₁ hh₂
+/-- The directions predicted for the facet of `S`. -/
+def dirs (S : Finset (Fin n)) : Submodule ℝ (Fin n → ℝ) := LinearMap.ker (pairL S)
 
-theorem vacuusPlate_polar {R : Set E} {a b : E} (hli : LinearIndependent ℝ ![a, b])
-    (hR : (affineSpan ℝ R : Set E) = ridgeFlat a 1 b 1) :
-    Submodule.span ℝ R = (ℝ ∙ (a - b))ᗮ := by
-  exact VacuusResonus.vacuusPlate_polar hli hR
+/-- The coordinates in blocks `≤ t`. -/
+def low (key : Fin n → Fin m) (t : ℕ) : Finset (Fin n) := univ.filter fun i => (key i : ℕ) ≤ t
 
-theorem heart_of_symm {X : Set E} (hs : -X = X) : IsHeart X := by
-  exact VacuusResonus.heart_of_symm hs
+/-- The coordinates in block `b`. -/
+def block (key : Fin n → Fin m) (b : Fin m) : Finset (Fin n) := univ.filter fun i => key i = b
 
-end General
+/-- The face of the ordered set partition `key`. -/
+def flagFace (key : Fin n → Fin m) : Set (Fin n → ℝ) :=
+  {x | x ∈ P n ∧ ∀ t : Fin m, ∑ i ∈ low key t, x i = top n (low key t).card}
 
-section Perm
-variable {n : ℕ}
+/-- **The face of an ordered set partition is an exposed face of the permutohedron.** -/
+theorem flagFace_isExposed (key : Fin n → Fin m) : IsExposed ℝ (P n) (flagFace key) := by
+  exact PermFaces.flagFace_isExposed key
 
-/-- The flat of the permutohedron ridge `(B₁, B₂, B₃)` inside `∑ y = 0`. -/
-def permFlat (B₁ B₂ B₃ : Finset (Fin n)) : Set (Fin n → ℝ) :=
-  {y | ∑ i ∈ B₁, y i = (B₁.card : ℝ) * ((B₂.card : ℝ) + B₃.card) / 2 ∧
-       ∑ i ∈ B₁ ∪ B₂, y i = ((B₁.card : ℝ) + B₂.card) * B₃.card / 2 ∧ ∑ i, y i = 0}
+/-- **The face of an ordered set partition into `m` nonempty blocks has dimension `n - m`.** -/
+theorem finrank_vectorSpan_flagFace {key : Fin n → Fin m} (hkey : Function.Surjective key) :
+    Module.finrank ℝ (vectorSpan ℝ (flagFace key)) = n - m := by
+  exact PermFaces.finrank_vectorSpan_flagFace hkey
 
-theorem span_permFlat {B₁ B₂ B₃ : Finset (Fin n)} (h12 : Disjoint B₁ B₂) (h13 : Disjoint B₁ B₃)
-    (h23 : Disjoint B₂ B₃) (hu : B₁ ∪ B₂ ∪ B₃ = univ) (ha : B₁.Nonempty) (hb : B₂.Nonempty) (hc : B₃.Nonempty) :
-    (Submodule.span ℝ (permFlat B₁ B₂ B₃) : Set (Fin n → ℝ)) =
-      {y | ∑ i, y i = 0 ∧ (B₃.card : ℝ) * ((B₁.card : ℝ) + B₂.card) * ∑ i ∈ B₁, y i +
-        (B₁.card : ℝ) * ((B₂.card : ℝ) + B₃.card) * ∑ i ∈ B₃, y i = 0} := by
-  exact congrArg SetLike.coe (VacuusResonus.span_permFlat h12 h13 h23 hu ha hb hc)
+/-- **Each face of `S` is an exposed face of the permutohedron.** -/
+theorem facet_isExposed (S : Finset (Fin n)) : IsExposed ℝ (P n) (facet S) := by
+  exact PermFaces.facet_isExposed S
 
-end Perm
+/-- **The directions of a facet.** For `∅ ≠ S ≠ univ`, the vector span of the facet of `S` is `dirs S`. -/
+theorem vectorSpan_facet {S : Finset (Fin n)} (hS : S.Nonempty) (hSc : Sᶜ.Nonempty) :
+    vectorSpan ℝ (facet S) = dirs S := by
+  exact PermFaces.vectorSpan_facet hS hSc
 
-section Webs
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+/-- **Each facet has dimension `n - 2`.** -/
+theorem finrank_vectorSpan_facet {S : Finset (Fin n)} (hS : S.Nonempty) (hSc : Sᶜ.Nonempty) :
+    Module.finrank ℝ (vectorSpan ℝ (facet S)) = n - 2 := by
+  exact PermFaces.finrank_vectorSpan_facet hS hSc
 
-theorem web_iff {P : Set E} (hc : Convex ℝ P) (hs : ∀ x ∈ P, -x ∈ P)
-    (hi : (interior P).Nonempty) {f : E →L[ℝ] ℝ} (hf : f ≠ 0) {h : ℝ} (hh : IsLUB (f '' P) h)
-    (Λ : AddSubgroup E) :
-    (∀ lam ∈ Λ, ∀ μ ∈ Λ, (∃ x ∈ interior ((fun y => y - μ) ⁻¹' P), f x = f lam) → f lam = f μ) ↔
-      ∀ ν ∈ Λ, f ν = 0 ∨ h ≤ |f ν| := by
-  exact VacuusResonus.web_iff hc hs hi hf hh Λ
+/-! ### The Vacuus: the plate of a ridge -/
 
-end Webs
+/-- The centre of the permutohedron. -/
+noncomputable def centre (n : ℕ) : Fin n → ℝ := fun _ => ((n : ℝ) + 1) / 2
+
+/-- The plate predicted by #120 Theorem 3 (i), as a submodule of `Fin n → ℝ`. -/
+def permPlate (B₁ B₂ B₃ : Finset (Fin n)) : Submodule ℝ (Fin n → ℝ) where
+  carrier := {y | ∑ i, y i = 0 ∧
+    (B₃.card : ℝ) * ((B₁.card : ℝ) + B₂.card) * ∑ i ∈ B₁, y i +
+      (B₁.card : ℝ) * ((B₂.card : ℝ) + B₃.card) * ∑ i ∈ B₃, y i = 0}
+  add_mem' := by
+    rintro x y ⟨hx1, hx2⟩ ⟨hy1, hy2⟩
+    refine ⟨?_, ?_⟩
+    · simp [Finset.sum_add_distrib, hx1, hy1]
+    · simp only [Pi.add_apply, Finset.sum_add_distrib]; linear_combination hx2 + hy2
+  zero_mem' := by simp
+  smul_mem' := by
+    rintro t y ⟨h1, h2⟩
+    refine ⟨?_, ?_⟩
+    · show ∑ i, t * y i = 0
+      rw [← Finset.mul_sum, h1, mul_zero]
+    · show (B₃.card : ℝ) * ((B₁.card : ℝ) + B₂.card) * ∑ i ∈ B₁, t * y i +
+          (B₁.card : ℝ) * ((B₂.card : ℝ) + B₃.card) * ∑ i ∈ B₃, t * y i = 0
+      rw [← Finset.mul_sum, ← Finset.mul_sum]; linear_combination t * h2
+
+/-- **#120 Theorem 3 (i) on the real ridge.** For an ordered partition into three nonempty blocks, the plane through the
+centre and the ridge (the face of `key`) is the Vacuus plate `permPlate B₁ B₂ B₃`. -/
+theorem span_centred_ridge {key : Fin n → Fin 3} (hkey : Function.Surjective key) :
+    Submodule.span ℝ ((fun x => x - centre n) '' flagFace key) =
+      permPlate (block key 0) (block key 1) (block key 2) := by
+  exact PermFaces.span_centred_ridge hkey
+
+/-- Block sizes. -/
+def sz (key : Fin n → Fin 3) (b : Fin 3) : ℝ := (block key b).card
+
+/-- **#120 Theorem 3 (ii), complete.** Two ridges (ordered partitions into three nonempty blocks) have the same Vacuus plate
+exactly when: the outer blocks differ in size and the second ridge is the first or the first read backwards; or both ridges
+have outer blocks of equal size and the same middle block or complementary middle blocks. -/
+theorem plate_eq_iff {key key' : Fin n → Fin 3} (hk : Function.Surjective key) (hk' : Function.Surjective key') :
+    permPlate (block key 0) (block key 1) (block key 2) =
+        permPlate (block key' 0) (block key' 1) (block key' 2) ↔
+      (sz key 0 ≠ sz key 2 ∧ (key' = key ∨ key' = Fin.rev ∘ key)) ∨
+      (sz key 0 = sz key 2 ∧ sz key' 0 = sz key' 2 ∧
+        (block key' 1 = block key 1 ∨ block key' 1 = (block key 1)ᶜ)) := by
+  exact PermFaces.plate_eq_iff hk hk'
+
+/-! ### The number of plates -/
+
+/-- The plate of a ridge. -/
+def plate (key : Fin n → Fin 3) : Submodule ℝ (Fin n → ℝ) :=
+  permPlate (block key 0) (block key 1) (block key 2)
+
+/-- The set of all ridge plates of the permutohedron in `Fin n → ℝ`. -/
+def plateSet (n : ℕ) : Set (Submodule ℝ (Fin n → ℝ)) :=
+  {P | ∃ key : Fin n → Fin 3, Function.Surjective key ∧
+    permPlate (block key 0) (block key 1) (block key 2) = P}
+
+/-- Block sizes as natural numbers. -/
+def bc (key : Fin n → Fin 3) (b : Fin 3) : ℕ := (block key b).card
+
+/-- The admissible size triples: `a + b + c = n`, all at least `1`, `a < c`. -/
+def sizes (n : ℕ) : Finset (Fin 3 → ℕ) :=
+  (Finset.Nat.antidiagonalTuple 3 n).filter fun t => 1 ≤ t 0 ∧ 1 ≤ t 1 ∧ 1 ≤ t 2 ∧ t 0 < t 2
+
+/-- **The number of distinct Vacuus plates of the permutohedron** (`n ≥ 3`):
+`∑_{a+b+c=n, a,b,c ≥ 1, a<c} n!/(a! b! c!) + T(n)`, with `T(n) = 2^(n-2) - 1` for `n` even and `2^(n-1) - 1` for `n` odd. -/
+theorem card_plateSet (hn : 3 ≤ n) :
+    (plateSet n).ncard =
+      ∑ t ∈ sizes n, n.factorial / ((t 0).factorial * (t 1).factorial * (t 2).factorial) +
+        (if Even n then 2 ^ (n - 2) - 1 else 2 ^ (n - 1) - 1) := by
+  exact PermFaces.card_plateSet hn
+
+theorem plates_three : (plateSet 3).ncard = 3 := by
+  exact PermFaces.plates_three
+
+theorem plates_four : (plateSet 4).ncard = 15 := by
+  exact PermFaces.plates_four
+
+theorem plates_five : (plateSet 5).ncard = 65 := by
+  exact PermFaces.plates_five
+
+theorem plates_six : (plateSet 6).ncard = 225 := by
+  exact PermFaces.plates_six
+
+theorem plates_seven : (plateSet 7).ncard = 770 := by
+  exact PermFaces.plates_seven
+
+theorem plates_eight : (plateSet 8).ncard = 2443 := by
+  exact PermFaces.plates_eight
+
+/-! ### The Resonus -/
+
+/-- **Parallel facets.** For `∅ ≠ S, S' ≠ univ`, the facets of `S` and `S'` have the same directions exactly when
+`S' = S` or `S' = Sᶜ`. -/
+theorem dirs_eq_iff {S S' : Finset (Fin n)} (hS : S.Nonempty) (hSc : Sᶜ.Nonempty) (hS' : S'.Nonempty)
+    (hSc' : S'ᶜ.Nonempty) : dirs S = dirs S' ↔ S' = S ∨ S' = Sᶜ := by
+  exact PermFaces.dirs_eq_iff hS hSc hS' hSc'
+
+/-- **The Resonus of the permutohedron**: the direction spaces of its facets (the hyperplanes of the sum-zero space through
+the centre parallel to a facet), parallel facets sharing one. -/
+def resonusSet (n : ℕ) : Set (Submodule ℝ (Fin n → ℝ)) :=
+  {D | ∃ S : Finset (Fin n), S.Nonempty ∧ Sᶜ.Nonempty ∧ vectorSpan ℝ (facet S) = D}
+
+/-- The same two facet statements for the two sets named in `dirs_eq_iff`, in terms of the facets themselves. -/
+theorem vectorSpan_facet_eq_iff {S S' : Finset (Fin n)} (hS : S.Nonempty) (hSc : Sᶜ.Nonempty) (hS' : S'.Nonempty)
+    (hSc' : S'ᶜ.Nonempty) : vectorSpan ℝ (facet S) = vectorSpan ℝ (facet S') ↔ S' = S ∨ S' = Sᶜ := by
+  exact PermFaces.vectorSpan_facet_eq_iff hS hSc hS' hSc'
+
+/-- **The number of Resonus planes of the permutohedron is `2^(n-1) - 1`** (all `n`; the paper's range is `n ≥ 2`). -/
+theorem card_resonusSet (n : ℕ) : (resonusSet n).ncard = 2 ^ (n - 1) - 1 := by
+  exact PermFaces.card_resonusSet n
+
+theorem resonus_three : (resonusSet 3).ncard = 3 := by
+  exact PermFaces.resonus_three
+
+theorem resonus_four : (resonusSet 4).ncard = 7 := by
+  exact PermFaces.resonus_four
+
+theorem resonus_five : (resonusSet 5).ncard = 15 := by
+  exact PermFaces.resonus_five
+
+theorem resonus_six : (resonusSet 6).ncard = 31 := by
+  exact PermFaces.resonus_six
+
+theorem resonus_seven : (resonusSet 7).ncard = 63 := by
+  exact PermFaces.resonus_seven
+
+theorem resonus_eight : (resonusSet 8).ncard = 127 := by
+  exact PermFaces.resonus_eight
+
+/-- **Each Resonus plane is parallel to a facet**: it is `dirs S` for a facet `S`, the facet is nonempty and lies in the
+translate of the plane through any of its points, and the plane has dimension `n - 2`. -/
+theorem resonus_parallel {D : Submodule ℝ (Fin n → ℝ)} (hD : D ∈ resonusSet n) :
+    ∃ S : Finset (Fin n), S.Nonempty ∧ Sᶜ.Nonempty ∧ D = dirs S ∧ (facet S).Nonempty ∧
+      (∀ x ∈ facet S, facet S ⊆ x +ᵥ (D : Set (Fin n → ℝ))) ∧ Module.finrank ℝ D = n - 2 := by
+  exact PermFaces.resonus_parallel hD
+
+/-- **When a Resonus plane is a Vacuus plate.** The direction space of the facet of `S` is the plate of the ridge with blocks
+`B₁, B₂, B₃` exactly when `B₁` and `B₃` have equal size and `S` is the middle block `B₂` or its complement. -/
+theorem dirs_eq_plate_iff {key : Fin n → Fin 3} (hk : Function.Surjective key) (S : Finset (Fin n)) :
+    dirs S = plate key ↔ bc key 0 = bc key 2 ∧ (S = block key 1 ∨ S = (block key 1)ᶜ) := by
+  exact PermFaces.dirs_eq_plate_iff hk S
+
+/-- **`n` odd: every Resonus plane is a Vacuus plate.** -/
+theorem resonusSet_subset_plateSet_of_odd (hn : 3 ≤ n) (ho : ¬ Even n) : resonusSet n ⊆ plateSet n := by
+  exact PermFaces.resonusSet_subset_plateSet_of_odd hn ho
+
+/-- **`n` even: exactly `2^(n-2)` Resonus planes are not Vacuus plates** (and `2^(n-2) - 1` are). -/
+theorem card_resonus_diff_plate_even (hn : 3 ≤ n) (he : Even n) :
+    (resonusSet n \ plateSet n).ncard = 2 ^ (n - 2) := by
+  exact PermFaces.card_resonus_diff_plate_even hn he
 
 end VR

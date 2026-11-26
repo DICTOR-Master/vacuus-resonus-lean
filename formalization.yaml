@@ -2,24 +2,28 @@
 version: "v0.4"
 
 project:
-  name: "Planes Through the Centre of a Polytope: the Polar Link, the Pencil Lemma and the Permutohedron, in Lean"
+  name: "Planes Through the Centre of the Permutohedron: Faces, Vacuus Plates and Their Count, in Lean"
   description: >-
-    For a convex polytope with the origin inside, consider two families of
-    planes through the origin: the planes through each ridge (an edge in
-    3-space), and the planes parallel to each facet. Paper #120 calls them
-    the Vacuus and the Resonus. This entry proves in Lean that the plane
-    parallel to the facet <a, x> = 1 is the orthogonal complement of a, the
-    corresponding corner of the polar polytope; that the plane through a
-    ridge on the facet planes <u1, y> = h1 and <u2, y> = h2 is the zero set
-    of h2 u1 - h1 u2 (a standard pencil fact), so it is perpendicular to the
-    polar edge; that a centrally symmetric set has its ridges in opposite
-    pairs; the equation of the plane through each ridge of the
-    permutohedron in every dimension; and an exact test for when the
-    translates of a central plane through a lattice tiling by a centrally
-    symmetric cell meet each cell only in its own central plane. The facts
-    are elementary or standard; the entry gives their Lean proofs in any
-    dimension. Audience: readers of polytope geometry and Mathlib users
-    working with convex sets.
+    The permutohedron in R^n is the convex hull of the rearrangements of
+    (n, n-1, ..., 1). This entry works with its real faces, defined from the
+    polytope: for every ordered partition of the coordinates into m nonempty
+    blocks it proves that the corresponding face is an exposed face of
+    dimension n - m. For the ridges (m = 3, blocks of sizes a, b, c) it
+    proves that the plane through the centre and the ridge is
+    {y : sum y = 0, c(a+b) sum over B1 + a(b+c) sum over B3 = 0}; that two
+    ridges give the same plane exactly when they are equal or reverses, or
+    both have a = c and the same or complementary middle blocks; and that
+    the number of distinct planes is the closed formula of OEIS A402191 for
+    every n >= 3 (values 3, 15, 65, 225, 770, 2443 for n = 3 to 8). For the
+    planes through the centre parallel to the facets (the resonance
+    arrangement), it proves that two facets share a plane exactly when their
+    sets are equal or complementary, that there are 2^(n-1) - 1 such planes,
+    that each is parallel to its facet with dimension n - 2, and exactly
+    which of them are also ridge planes: all of them for odd n, all but
+    2^(n-2) for even n. Paper #120 calls the two families the Vacuus and the
+    Resonus. The proofs build on TauCeti's formalization of Rado's theorem.
+    Audience: readers of polytope geometry and Mathlib users working with
+    convex sets and permutations.
   authors:
     - name: "DICTO"
       orcid: "0009-0001-2620-2036"
@@ -31,8 +35,8 @@ project:
       github: "DICTOR-Master"
 
 classification:
-  arxiv: ["math.MG"]
-  msc2020: ["52B11", "52B05", "52C22", "03B35"]
+  arxiv: ["math.CO", "math.MG"]
+  msc2020: ["52B12", "52B05", "05A15", "03B35"]
 
 sources:
   - title: "The Vacuus and the Resonus: Form and Emptiness in the Planes of Polyhedra"
@@ -42,38 +46,87 @@ sources:
         github: "DICTOR-Master"
     id: "doi:10.5281/zenodo.24521888"
     type: "paper"
-    location: "Zenodo; Theorems 1 (one direction), 2, 3 (i) and 4; the lattice-web test in the next version"
+    location: "Zenodo (#120, version 1); Theorem 3 (i) to (iv) and Theorem 5"
     relationship: "formalizes"
     note: >-
-      Read (the statements formalized and their proofs). Theorem 4 (a) is
-      resonusPlane_eq_orthogonal; Theorem 2 is span_ridgeFlat; Theorem 4 (b)
-      is vacuusPlate_polar; Theorem 1 in the direction "centrally symmetric
-      implies heart kind" is heart_of_symm (the converse is not formalized);
-      Theorem 3 (i) is span_permFlat; the lattice-web test (Theorem 0 of the
-      study behind the next version) is web_iff.
+      Read (the statements formalized and their proofs). Theorem 3 (i) is
+      span_centred_ridge, (ii) is plate_eq_iff, (iii) is card_plateSet with
+      plates_three to plates_eight, (iv) is dirs_eq_plate_iff,
+      resonusSet_subset_plateSet_of_odd and card_resonus_diff_plate_even;
+      Theorem 5 (the Resonus of the permutohedron, 2^(n-1) - 1 planes) is
+      dirs_eq_iff, vectorSpan_facet_eq_iff, card_resonusSet and
+      resonus_parallel. The face statements (flagFace_isExposed,
+      finrank_vectorSpan_flagFace, facet_isExposed, vectorSpan_facet,
+      finrank_vectorSpan_facet) are the classical facts the paper uses.
     author_endorsement: "participated"
+  - title: "DICTO 1:2 Truncated Octahedron: The 4D Vacuus of the Permutohedron"
+    authors:
+      - name: "DICTO"
+        orcid: "0009-0001-2620-2036"
+        github: "DICTOR-Master"
+    id: "doi:10.5281/zenodo.24121177"
+    type: "paper"
+    location: "Zenodo (#105); Theorem 3"
+    relationship: "formalizes"
+    note: >-
+      The first statement of the ridge planes of the permutohedron and their
+      count (#120 Theorem 3 (i) to (iii) restate it): span_centred_ridge,
+      plate_eq_iff, card_plateSet.
+    author_endorsement: "participated"
+  - title: "An inequality"
+    authors:
+      - "R. Rado"
+    type: "paper"
+    location: "J. London Math. Soc. 27 (1952) 1-6"
+    relationship: "background"
+    note: >-
+      Cited (not reread for this entry): the permutohedron as the set of
+      vectors majorized by (n, ..., 1). Used through TauCeti's formalization
+      (see related_formalizations).
+    author_endorsement: "n/a"
+  - title: "Number of distinct hyperplanes through the center of the (n-1)-dimensional permutohedron that are spanned by its ridges"
+    authors:
+      - "OEIS Foundation"
+    id: "https://oeis.org/A402191"
+    type: "other"
+    location: "OEIS sequence A402191"
+    relationship: "background"
+    note: >-
+      The sequence whose closed formula and first values card_plateSet and
+      plates_three to plates_eight prove.
+    author_endorsement: "n/a"
   - title: "Lectures on Polytopes"
     authors:
       - "G. M. Ziegler"
     type: "book"
-    location: "Graduate Texts in Mathematics 152, Springer (1995); Theorem 2.11 (polarity and face duality)"
+    location: "Graduate Texts in Mathematics 152, Springer (1995); faces of polytopes, the permutohedron"
     relationship: "background"
     note: >-
-      Cited only (not read for this entry). The polar polytope and the
-      duality between facets of P and corners of the polar, which the paper
-      uses to name the corner a; the entry states the facet plane directly
-      as <a, x> = 1 and does not formalize face duality.
+      Cited only (not read for this entry): faces of polytopes and the face
+      structure of the permutohedron.
     author_endorsement: "n/a"
 
-related_formalizations: []
+related_formalizations:
+  - id: "https://github.com/TauCetiProject/TauCeti/blob/6d810e58e90dc1a8f89e5cb6056ee36c26da67d3/TauCeti/Analysis/Convex/PermutationOrbit.lean"
+    relationship: "other"
+    note: >-
+      TauCeti's formalization of Rado's theorem (mem_convexHull_range_comp_perm_iff
+      and the prefix-sum lemmas). This entry depends on it: the facet heights
+      top n k are TauCeti.prefixSum, and the face proofs use its majorization
+      inequalities. Not part of this entry's claims.
 
 status:
   scope: >-
-    Formalized (Challenge, six theorems): resonusPlane_eq_orthogonal,
-    span_ridgeFlat, vacuusPlate_polar (any real inner-product space),
-    heart_of_symm (one direction of Theorem 1), span_permFlat (every n),
-    web_iff (any real normed space). Not formalized: the converse of
-    Theorem 1, Theorem 3 (ii) and (iii), and the catalogue of 163 solids.
+    Formalized (Challenge, 27 theorems): the faces of the permutohedron from
+    ordered partitions (exposed, dimension n - m), facets and their direction
+    spaces, the plane through the centre and each ridge, when two ridges
+    share it, their number (closed formula, n >= 3, and n = 3 to 8), and the
+    Resonus: when two facets share a plane, the number 2^(n-1) - 1,
+    parallelism and dimension, and which Resonus planes are ridge planes.
+    Not formalized: that every face of the permutohedron comes from an
+    ordered partition (the entry proves only that these sets are exposed
+    faces of the stated dimensions); Theorem 3 (v) of #120 (no plate is a
+    mirror); the type-B results and the catalogue of #120.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: []
@@ -81,44 +134,50 @@ status:
 automation:
   methods:
     - method: "agent"
-      models: ["Claude Opus (Anthropic)"]
-      framework: "Claude Code (Opus)"
+      models: ["Claude Opus (Anthropic)", "Claude Fable (Anthropic)"]
+      framework: "Claude Code"
       tool_setup: >-
-        A Claude Code agent wrote the definitions, the statements and the
-        proofs, and ran the Lake builds against Mathlib v4.35.0-rc2 on Linux
-        compute machines.
+        Claude Code agents wrote the definitions, the statements and the
+        proofs and ran the Lake builds and the comparator against Mathlib and
+        TauCeti (Lean v4.37.0-rc1) on Linux compute machines. Steps 1 to 5
+        (faces, ridge planes, plate coincidences) were written by the Opus
+        agent; the count, the Resonus file and the packaging by a Fable
+        subagent, each rebuilt and checked by the Opus agent.
       cost:
-        wall_time: "about two days (25 to 26 November 2026), in milestones"
+        wall_time: "about two days (26 to 27 November 2026), in milestones"
         spend_usd: "subscription-based"
         hardware: "local Linux machines"
       prompting_notes: >-
-        DICTO found the results (paper #120), asked for them in Lean, and
-        chose which statements to include first.
+        DICTO found the results (papers #105 and #120), asked for them in Lean
+        on the real polytope after the first entry was withdrawn, and chose
+        the title.
   spend_usd: "subscription-based"
   notes: >-
     DICTO posed the formalization and directed the work; every definition,
-    statement and proof was written by the agent. Every build was checked by
-    a full recompilation and #print axioms (only propext, Classical.choice
-    and Quot.sound). No independent human line-by-line audit of the Lean
-    code has been made.
+    statement and proof was written by the agents. Every build was checked
+    by a full recompilation, #print axioms (only propext, Classical.choice
+    and Quot.sound) and the lake comparator (with a negative control). No
+    independent human line-by-line audit of the Lean code has been made.
 
 fidelity:
   divergences: >-
-    (1) A facet is given by its plane <a, x> = 1 (the origin inside makes
-    this normalization possible); the Resonus plane of that facet is the set
-    of translations carrying the plane into itself. (2) A ridge is entered
-    through its affine span: the flat of two facet planes; for the polytope
-    statement, a ridge R spans the same plane as the flat when its affine
-    span is the flat (span_eq_of_affineSpan in the library). (3) In
-    heart_of_symm a ridge of X is a nonempty exposed face of dimension
-    finrank E - 2, and "heart kind" means the opposite of every ridge is a
-    ridge; X is any set. (4) The permutohedron ridge (B1, B2, B3) is given
-    by its two facet planes inside the hyperplane sum y = 0, at the
-    heights of the centred permutohedron; that these are its facet planes
-    is not formalized. (5) web_iff is stated for a convex, centrally
-    symmetric set with interior points, a nonzero continuous functional f
-    with least upper bound h on the set, and an additive subgroup as the
-    lattice.
+    (1) The permutohedron P n is the convex hull of the rearrangements of
+    (n, ..., 1), not centred; the centre ((n+1)/2, ...) is subtracted in
+    span_centred_ridge, and all planes are stated as subspaces of the
+    sum-zero space. (2) A face is given by an ordered partition (a surjective
+    key : Fin n -> Fin m) as flagFace: the points of P n where every initial
+    union of blocks has the largest coordinate sum occurring on P n (top n k,
+    defined with TauCeti.prefixSum); a facet is facet S for one set S. The
+    entry proves these are exposed faces of dimension n - m and n - 2; it
+    does not prove that all faces arise this way, nor identify facet S with
+    a two-block flagFace. (3) A ridge is the flagFace of a surjective
+    key : Fin n -> Fin 3; its Vacuus plate is stated by the explicit equation
+    permPlate, linked to the ridge by span_centred_ridge; plate_eq_iff,
+    card_plateSet and plates_* are stated for permPlate. (4) The Resonus
+    plane of facet S is its direction space vectorSpan (facet S) = dirs S;
+    'through the centre, parallel to the facet' is resonus_parallel. (5)
+    Counts are Set.ncard of sets of submodules; the sum in card_plateSet
+    uses natural-number division of factorials (exact here).
 
 review:
   status: "self-assessed"
@@ -126,40 +185,126 @@ review:
     - "none"
   notes: >-
     Every definition and statement in the Challenge is copied from the Lean
-    library (namespace VacuusResonus renamed VR); the Solution is the
-    Challenge word for word with each proof transferred from the library.
-    Formal search (26 November 2026): Mathlib v4.35.0-rc2 (polar sets,
-    exposed faces, orthogonal complements); we found no earlier Lean proof
-    of these statements in this form.
+    library PermFaces (namespace VR); the Solution restates the Challenge
+    and transfers each proof from the library. The comparator accepts all
+    27 theorems and rejects a deliberately altered statement. Formal search
+    (26 November 2026): Mathlib (no permutohedron faces), public Lean code
+    for permutohedron, majorization and Rado; found TauCeti (Rado's theorem,
+    used here); no earlier formalization of the ridge planes, their count or
+    the resonance arrangement of the permutohedron was found.
 
 alignment:
   namespace: "VR"
   statements:
-    - source: "#120, Theorem 4 (a), the polar link"
-      lean: "VR.resonusPlane_eq_orthogonal"
+    - source: "faces from ordered partitions are exposed"
+      lean: "VR.flagFace_isExposed"
       module: "Challenge"
       status: "proved"
-    - source: "#120, Theorem 2, the pencil lemma"
-      lean: "VR.span_ridgeFlat"
+    - source: "faces from ordered partitions have dimension n - m"
+      lean: "VR.finrank_vectorSpan_flagFace"
       module: "Challenge"
       status: "proved"
-    - source: "#120, Theorem 4 (b), any dimension"
-      lean: "VR.vacuusPlate_polar"
+    - source: "facets are exposed"
+      lean: "VR.facet_isExposed"
       module: "Challenge"
       status: "proved"
-    - source: "#120, Theorem 1, centrally symmetric implies heart kind"
-      lean: "VR.heart_of_symm"
+    - source: "direction space of a facet"
+      lean: "VR.vectorSpan_facet"
       module: "Challenge"
       status: "proved"
-    - source: "#120, Theorem 3 (i), the permutohedron plate"
-      lean: "VR.span_permFlat"
+    - source: "facets have dimension n - 2"
+      lean: "VR.finrank_vectorSpan_facet"
       module: "Challenge"
       status: "proved"
-    - source: "#120 next version, the lattice-web test"
-      lean: "VR.web_iff"
+    - source: "#120 Theorem 3 (i) (#105 Theorem 3)"
+      lean: "VR.span_centred_ridge"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 3 (ii)"
+      lean: "VR.plate_eq_iff"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 3 (iii), A402191"
+      lean: "VR.card_plateSet"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 3 (iii), value for n = three"
+      lean: "VR.plates_three"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 3 (iii), value for n = four"
+      lean: "VR.plates_four"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 3 (iii), value for n = five"
+      lean: "VR.plates_five"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 3 (iii), value for n = six"
+      lean: "VR.plates_six"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 3 (iii), value for n = seven"
+      lean: "VR.plates_seven"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 3 (iii), value for n = eight"
+      lean: "VR.plates_eight"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 5 (parallel facets share one plane)"
+      lean: "VR.dirs_eq_iff"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 5 (parallel facets share one plane)"
+      lean: "VR.vectorSpan_facet_eq_iff"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 5 (2^(n-1) - 1 planes)"
+      lean: "VR.card_resonusSet"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 5, value for n = three"
+      lean: "VR.resonus_three"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 5, value for n = four"
+      lean: "VR.resonus_four"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 5, value for n = five"
+      lean: "VR.resonus_five"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 5, value for n = six"
+      lean: "VR.resonus_six"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 5, value for n = seven"
+      lean: "VR.resonus_seven"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 5, value for n = eight"
+      lean: "VR.resonus_eight"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 5 (Resonus plane parallel to its facet)"
+      lean: "VR.resonus_parallel"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 3 (iv)"
+      lean: "VR.dirs_eq_plate_iff"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 3 (iv), n odd"
+      lean: "VR.resonusSet_subset_plateSet_of_odd"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 Theorem 3 (iv), n even"
+      lean: "VR.card_resonus_diff_plate_even"
       module: "Challenge"
       status: "proved"
 
 acknowledgements: >-
-  Mathlib (convex sets, exposed faces, inner-product spaces, linear
-  independence); G. M. Ziegler's account of polarity.
+  Mathlib (convex sets, exposed faces, affine spans, finite sets); TauCeti
+  (Rado's theorem and majorization); R. Rado; G. M. Ziegler.

@@ -45,8 +45,11 @@ def permPlate (B₁ B₂ B₃ : Finset (Fin n)) : Submodule ℝ (Fin n → ℝ) 
   smul_mem' := by
     rintro t y ⟨h1, h2⟩
     refine ⟨?_, ?_⟩
-    · simp [← Finset.mul_sum, h1]
-    · simp only [Pi.smul_apply, smul_eq_mul, ← Finset.mul_sum]; linear_combination t * h2
+    · show ∑ i, t * y i = 0
+      rw [← Finset.mul_sum, h1, mul_zero]
+    · show (B₃.card : ℝ) * ((B₁.card : ℝ) + B₂.card) * ∑ i ∈ B₁, t * y i +
+          (B₁.card : ℝ) * ((B₂.card : ℝ) + B₃.card) * ∑ i ∈ B₃, t * y i = 0
+      rw [← Finset.mul_sum, ← Finset.mul_sum]; linear_combination t * h2
 
 variable {B₁ B₂ B₃ : Finset (Fin n)}
 
