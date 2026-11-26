@@ -1,0 +1,165 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Planes Through the Centre of a Polytope: the Polar Link, the Pencil Lemma and the Permutohedron, in Lean"
+  description: >-
+    For a convex polytope with the origin inside, consider two families of
+    planes through the origin: the planes through each ridge (an edge in
+    3-space), and the planes parallel to each facet. Paper #120 calls them
+    the Vacuus and the Resonus. This entry proves in Lean that the plane
+    parallel to the facet <a, x> = 1 is the orthogonal complement of a, the
+    corresponding corner of the polar polytope; that the plane through a
+    ridge on the facet planes <u1, y> = h1 and <u2, y> = h2 is the zero set
+    of h2 u1 - h1 u2 (a standard pencil fact), so it is perpendicular to the
+    polar edge; that a centrally symmetric set has its ridges in opposite
+    pairs; the equation of the plane through each ridge of the
+    permutohedron in every dimension; and an exact test for when the
+    translates of a central plane through a lattice tiling by a centrally
+    symmetric cell meet each cell only in its own central plane. The facts
+    are elementary or standard; the entry gives their Lean proofs in any
+    dimension. Audience: readers of polytope geometry and Mathlib users
+    working with convex sets.
+  authors:
+    - name: "DICTO"
+      orcid: "0009-0001-2620-2036"
+      github: "DICTOR-Master"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - name: "DICTO"
+      orcid: "0009-0001-2620-2036"
+      github: "DICTOR-Master"
+
+classification:
+  arxiv: ["math.MG"]
+  msc2020: ["52B11", "52B05", "52C22", "03B35"]
+
+sources:
+  - title: "The Vacuus and the Resonus: Form and Emptiness in the Planes of Polyhedra"
+    authors:
+      - name: "DICTO"
+        orcid: "0009-0001-2620-2036"
+        github: "DICTOR-Master"
+    id: "doi:10.5281/zenodo.24521888"
+    type: "paper"
+    location: "Zenodo; Theorems 1 (one direction), 2, 3 (i) and 4; the lattice-web test in the next version"
+    relationship: "formalizes"
+    note: >-
+      Read (the statements formalized and their proofs). Theorem 4 (a) is
+      resonusPlane_eq_orthogonal; Theorem 2 is span_ridgeFlat; Theorem 4 (b)
+      is vacuusPlate_polar; Theorem 1 in the direction "centrally symmetric
+      implies heart kind" is heart_of_symm (the converse is not formalized);
+      Theorem 3 (i) is span_permFlat; the lattice-web test (Theorem 0 of the
+      study behind the next version) is web_iff.
+    author_endorsement: "participated"
+  - title: "Lectures on Polytopes"
+    authors:
+      - "G. M. Ziegler"
+    type: "book"
+    location: "Graduate Texts in Mathematics 152, Springer (1995); Theorem 2.11 (polarity and face duality)"
+    relationship: "background"
+    note: >-
+      Cited only (not read for this entry). The polar polytope and the
+      duality between facets of P and corners of the polar, which the paper
+      uses to name the corner a; the entry states the facet plane directly
+      as <a, x> = 1 and does not formalize face duality.
+    author_endorsement: "n/a"
+
+related_formalizations: []
+
+status:
+  scope: >-
+    Formalized (Challenge, six theorems): resonusPlane_eq_orthogonal,
+    span_ridgeFlat, vacuusPlate_polar (any real inner-product space),
+    heart_of_symm (one direction of Theorem 1), span_permFlat (every n),
+    web_iff (any real normed space). Not formalized: the converse of
+    Theorem 1, Theorem 3 (ii) and (iii), and the catalogue of 163 solids.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: []
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["Claude Opus (Anthropic)"]
+      framework: "Claude Code (Opus)"
+      tool_setup: >-
+        A Claude Code agent wrote the definitions, the statements and the
+        proofs, and ran the Lake builds against Mathlib v4.35.0-rc2 on Linux
+        compute machines.
+      cost:
+        wall_time: "about two days (25 to 26 November 2026), in milestones"
+        spend_usd: "subscription-based"
+        hardware: "local Linux machines"
+      prompting_notes: >-
+        DICTO found the results (paper #120), asked for them in Lean, and
+        chose which statements to include first.
+  spend_usd: "subscription-based"
+  notes: >-
+    DICTO posed the formalization and directed the work; every definition,
+    statement and proof was written by the agent. Every build was checked by
+    a full recompilation and #print axioms (only propext, Classical.choice
+    and Quot.sound). No independent human line-by-line audit of the Lean
+    code has been made.
+
+fidelity:
+  divergences: >-
+    (1) A facet is given by its plane <a, x> = 1 (the origin inside makes
+    this normalization possible); the Resonus plane of that facet is the set
+    of translations carrying the plane into itself. (2) A ridge is entered
+    through its affine span: the flat of two facet planes; for the polytope
+    statement, a ridge R spans the same plane as the flat when its affine
+    span is the flat (span_eq_of_affineSpan in the library). (3) In
+    heart_of_symm a ridge of X is a nonempty exposed face of dimension
+    finrank E - 2, and "heart kind" means the opposite of every ridge is a
+    ridge; X is any set. (4) The permutohedron ridge (B1, B2, B3) is given
+    by its two facet planes inside the hyperplane sum y = 0, at the
+    heights of the centred permutohedron; that these are its facet planes
+    is not formalized. (5) web_iff is stated for a convex, centrally
+    symmetric set with interior points, a nonzero continuous functional f
+    with least upper bound h on the set, and an additive subgroup as the
+    lattice.
+
+review:
+  status: "self-assessed"
+  reviewers:
+    - "none"
+  notes: >-
+    Every definition and statement in the Challenge is copied from the Lean
+    library (namespace VacuusResonus renamed VR); the Solution is the
+    Challenge word for word with each proof transferred from the library.
+    Formal search (26 November 2026): Mathlib v4.35.0-rc2 (polar sets,
+    exposed faces, orthogonal complements); we found no earlier Lean proof
+    of these statements in this form.
+
+alignment:
+  namespace: "VR"
+  statements:
+    - source: "#120, Theorem 4 (a), the polar link"
+      lean: "VR.resonusPlane_eq_orthogonal"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120, Theorem 2, the pencil lemma"
+      lean: "VR.span_ridgeFlat"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120, Theorem 4 (b), any dimension"
+      lean: "VR.vacuusPlate_polar"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120, Theorem 1, centrally symmetric implies heart kind"
+      lean: "VR.heart_of_symm"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120, Theorem 3 (i), the permutohedron plate"
+      lean: "VR.span_permFlat"
+      module: "Challenge"
+      status: "proved"
+    - source: "#120 next version, the lattice-web test"
+      lean: "VR.web_iff"
+      module: "Challenge"
+      status: "proved"
+
+acknowledgements: >-
+  Mathlib (convex sets, exposed faces, inner-product spaces, linear
+  independence); G. M. Ziegler's account of polarity.

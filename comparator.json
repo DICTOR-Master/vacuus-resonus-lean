@@ -1,0 +1,19 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "VR.resonusPlane_eq_orthogonal",
+    "VR.span_ridgeFlat",
+    "VR.vacuusPlate_polar",
+    "VR.heart_of_symm",
+    "VR.span_permFlat",
+    "VR.web_iff"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": true
+}
