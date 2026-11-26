@@ -111,9 +111,9 @@ related_formalizations:
     relationship: "other"
     note: >-
       TauCeti's formalization of Rado's theorem (mem_convexHull_range_comp_perm_iff
-      and the prefix-sum lemmas). This entry depends on it: the facet heights
-      top n k are TauCeti.prefixSum, and the face proofs use its majorization
-      inequalities. Not part of this entry's claims.
+      and the prefix-sum lemmas). Three of its files are copied into this
+      entry under Vendor/TauCeti/ (Apache-2.0; see NOTICE and fidelity) and
+      the face proofs use them. Not part of this entry's claims.
 
 status:
   scope: >-
@@ -164,18 +164,32 @@ fidelity:
     (1) The permutohedron P n is the convex hull of the rearrangements of
     (n, ..., 1), not centred; the centre ((n+1)/2, ...) is subtracted in
     span_centred_ridge, and all planes are stated as subspaces of the
-    sum-zero space. (2) A face is given by an ordered partition (a surjective
+    sum-zero space. (2) The directory Vendor/TauCeti/ contains three files
+    copied from the TauCeti library (https://github.com/TauCetiProject/TauCeti,
+    Apache-2.0, Copyright (c) 2026 The Tau Ceti contributors) at commit
+    6d810e58e90dc1a8f89e5cb6056ee36c26da67d3:
+    TauCeti/Algebra/BigOperators/Finset/PartialSum.lean,
+    TauCeti/Analysis/Convex/Majorization.lean and
+    TauCeti/Analysis/Convex/PermutationOrbit.lean, unchanged except for their
+    import paths (TauCeti.X became Vendor.TauCeti.X) and a header comment
+    recording the source; declaration names (TauCeti.*) are kept. They are
+    not this entry's work: they supply Rado's theorem (prefix-sum bound and
+    permutation invariance) used by the proofs. The Challenge imports only
+    Mathlib; its VR.prefixSum (the sum of the first k coordinates) is a copy
+    of TauCeti.prefixSum, and Solution.lean proves the copied definitions
+    equal the library's (bridge_top, bridge_facet, bridge_flagFace,
+    bridge_resonusSet). (3) A face is given by an ordered partition (a surjective
     key : Fin n -> Fin m) as flagFace: the points of P n where every initial
     union of blocks has the largest coordinate sum occurring on P n (top n k,
-    defined with TauCeti.prefixSum); a facet is facet S for one set S. The
+    defined with VR.prefixSum); a facet is facet S for one set S. The
     entry proves these are exposed faces of dimension n - m and n - 2; it
     does not prove that all faces arise this way, nor identify facet S with
-    a two-block flagFace. (3) A ridge is the flagFace of a surjective
+    a two-block flagFace. (4) A ridge is the flagFace of a surjective
     key : Fin n -> Fin 3; its Vacuus plate is stated by the explicit equation
     permPlate, linked to the ridge by span_centred_ridge; plate_eq_iff,
-    card_plateSet and plates_* are stated for permPlate. (4) The Resonus
+    card_plateSet and plates_* are stated for permPlate. (5) The Resonus
     plane of facet S is its direction space vectorSpan (facet S) = dirs S;
-    'through the centre, parallel to the facet' is resonus_parallel. (5)
+    'through the centre, parallel to the facet' is resonus_parallel. (6)
     Counts are Set.ncard of sets of submodules; the sum in card_plateSet
     uses natural-number division of factorials (exact here).
 

@@ -1,7 +1,6 @@
 module
 
 public import Mathlib
-public import TauCeti.Analysis.Convex.PermutationOrbit
 
 @[expose] public section
 
@@ -40,9 +39,9 @@ that occurs on `P n` (`top n k`, the sum of the `k` largest entries). `facet S` 
     plate; for even `n ≥ 4` exactly `2^(n-2)` Resonus planes are not.
 
 **Sources.** DICTO's paper #120 (Theorems 3 and 5). The faces of the permutohedron and Rado's theorem are classical (Rado
-1952; Ziegler, *Lectures on Polytopes*); `TauCeti.prefixSum` (the sum of the first `k` coordinates) is from the TauCeti
-library, whose formalization of Rado's theorem the proofs use. Every definition and statement is copied from the Lean
-library `PermFaces` (here namespace `VR`).
+1952; Ziegler, *Lectures on Polytopes*). Every definition and statement is copied from the Lean library `PermFaces` (here
+namespace `VR`); `prefixSum` (the sum of the first `k` coordinates) is copied from the TauCeti library (Apache-2.0), whose
+formalization of Rado's theorem the proofs use.
 -/
 
 namespace VR
@@ -60,8 +59,13 @@ def w (n : ℕ) : Fin n → ℝ := fun i => ((n - (i : ℕ) : ℕ) : ℝ)
 /-- The permutohedron: the convex hull of the rearrangements of `w`. -/
 def P (n : ℕ) : Set (Fin n → ℝ) := convexHull ℝ (Set.range fun σ : Equiv.Perm (Fin n) => w n ∘ σ)
 
+/-- The prefix sum `∑_{i < k} x i` of the first `k` coordinates of `x`. For `n ≤ k` it is the
+sum of all coordinates. -/
+def prefixSum {M : Type*} [AddCommMonoid M] (k : ℕ) (x : Fin n → M) : M :=
+  ∑ i : Fin n with i.val < k, x i
+
 /-- The sum of the `k` largest entries of `w`. -/
-def top (n k : ℕ) : ℝ := TauCeti.prefixSum k (w n)
+def top (n k : ℕ) : ℝ := prefixSum k (w n)
 
 /-- The face of `S`: the points of `P n` where the facet inequality of `S` is an equality. -/
 def facet (S : Finset (Fin n)) : Set (Fin n → ℝ) := {x | x ∈ P n ∧ ∑ i ∈ S, x i = top n S.card}

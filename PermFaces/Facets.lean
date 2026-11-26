@@ -4,7 +4,7 @@ DICTO, with Claude (Anthropic). Built on TauCeti's formalization of Rado's theor
 -/
 module
 
-public import TauCeti.Analysis.Convex.PermutationOrbit
+public import Vendor.TauCeti.Analysis.Convex.PermutationOrbit
 public import Mathlib.Analysis.Convex.Exposed
 
 @[expose] public section

@@ -1,0 +1,11 @@
+This entry includes three files copied from TauCeti (https://github.com/TauCetiProject/TauCeti),
+Copyright (c) 2026 The Tau Ceti contributors, licensed under the Apache License, Version 2.0 (see LICENSE),
+at commit 6d810e58e90dc1a8f89e5cb6056ee36c26da67d3, unchanged except their import paths
+(TauCeti.X -> Vendor.TauCeti.X) and a header comment recording this:
+
+  Vendor/TauCeti/Algebra/BigOperators/Finset/PartialSum.lean   (from TauCeti/Algebra/BigOperators/Finset/PartialSum.lean)
+  Vendor/TauCeti/Analysis/Convex/Majorization.lean             (from TauCeti/Analysis/Convex/Majorization.lean)
+  Vendor/TauCeti/Analysis/Convex/PermutationOrbit.lean         (from TauCeti/Analysis/Convex/PermutationOrbit.lean)
+
+The Lean declaration names and namespaces (`TauCeti.*`) are kept as in the original. The definition `VR.prefixSum` in
+Challenge.lean and Solution.lean is a copy of `TauCeti.prefixSum` from the first of these files.

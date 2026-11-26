@@ -1,16 +1,15 @@
 name = "PermFaces"
 version = "0.1.0"
-defaultTargets = ["PermFaces", "Challenge", "Solution"]
+defaultTargets = ["Vendor", "PermFaces", "Challenge", "Solution"]
 
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4"
 rev = "31ce06eaadf4a200c0e1407c5f10953cf606b8f8"
 
-[[require]]
-name = "TauCeti"
-git = "https://github.com/TauCetiProject/TauCeti"
-rev = "6d810e58e90dc1a8f89e5cb6056ee36c26da67d3"
+[[lean_lib]]
+name = "Vendor"
+roots = ["Vendor"]
 
 [[lean_lib]]
 name = "PermFaces"
